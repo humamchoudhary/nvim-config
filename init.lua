@@ -99,15 +99,15 @@ end)
 vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>', {
     noremap = true
 })
-vim.keymap.set("n","<C-p>","\"+p",{noremap=true})
-vim.keymap.set("n","<C-P>","\"+P",{noremap=true})
-
+vim.keymap.set("n", "<leader><C-p>", "\"+p", { noremap = true })
+vim.keymap.set("n", "<leader><C-P>", "\"+P", { noremap = true })
+vim.keymap.set("n","<C-a>","ggVG")
+vim.keymap.set("v","<C-a>","ggVG")
 vim.keymap.set("n", "<leader>y", "\"+y")
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.keymap.set("n", "<leader>y", "\"+y")
 
-
-
+vim.api.nvim_set_option_value("clipboard", "unnamed", {})
 
 vim.keymap.set('n', '<leader>a', require("harpoon.mark").add_file, {})
 vim.keymap.set('n', '<leader>m', require("harpoon.ui").toggle_quick_menu, {})
@@ -129,17 +129,17 @@ configs.setup({
 
 -- LUA LINE CONFIG
 -- require('lualine').setup()
-local nvim_tree = require('plugin.nvim-tree')
+local nvim_tree = require('ntree')
 nvim_tree.config()
 
 
-local statusline = require('plugin.statusline')
+local statusline = require('statusline')
 
 
 statusline.setup()
 
 vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('user_lsp_attach', { clear = true }),
+
     callback = function(event)
         local opts = { buffer = event.buf }
 
