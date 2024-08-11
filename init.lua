@@ -10,7 +10,9 @@ vim.opt.smartindent = true
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
 vim.opt.updatetime = 0
-
+vim.opt.fsync = false
+-- HELP
+vim.api.nvim_create_user_command('HK', 'help keymap-help', {})
 -- LAZY CONFIG
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -33,12 +35,14 @@ local plugins = {
     {
         'nvim-telescope/telescope.nvim',
         tag = '0.1.6',
-        dependencies = { 'nvim-lua/plenary.nvim' }
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        cmd = "Telescope", -- Lazy-load on Telescope command
     },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     {
         'nvim-lualine/lualine.nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' }
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        event = "VimEnter", -- Lazy-load on VimEnter
     },
     {
         "nvim-tree/nvim-tree.lua",
@@ -101,8 +105,8 @@ vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>', {
 })
 vim.keymap.set("n", "<leader><C-p>", "\"+p", { noremap = true })
 vim.keymap.set("n", "<leader><C-P>", "\"+P", { noremap = true })
-vim.keymap.set("n","<C-a>","ggVG")
-vim.keymap.set("v","<C-a>","ggVG")
+vim.keymap.set("n", "<C-a>", "ggVG")
+vim.keymap.set("v", "<C-a>", "ggVG")
 vim.keymap.set("n", "<leader>y", "\"+y")
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.keymap.set("n", "<leader>y", "\"+y")
@@ -121,23 +125,50 @@ require("nvim-treesitter.install").prefer_git = true
 
 local configs = require("nvim-treesitter.configs")
 configs.setup({
-    ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "python", "go" },
-    highlight = { enable = true },
-    indent = { enable = true },
+    ensure_installed = { "c", "lua", "javascript", "html", "python", "go" },
+    highlight = { enable = false },
+    indent = { enable = false },
 })
 
 
 -- LUA LINE CONFIG
 -- require('lualine').setup()
-local nvim_tree = require('ntree')
-nvim_tree.config()
+-- local nvim_tree = require('ntree')
+-- nvim_tree.config()
 
 
 local statusline = require('statusline')
 
 
 statusline.setup()
+-- SAVE Command
+local function save_with_feedback()
+    -- Get the current buffer number
+    local bufnr = vim.api.nvim_get_current_buf()
 
+    -- Get the current buffer's file name
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+
+    -- Save the file
+    local success, err = pcall(vim.cmd, 'write')
+
+    if success then
+        -- Get the number of lines in the buffer
+        local line_count = vim.api.nvim_buf_line_count(bufnr)
+
+        -- Create the output message
+        local output = string.format('"%s" %dL, %dB written',
+            vim.fn.fnamemodify(filename, ':t'),
+            line_count,
+            vim.fn.getfsize(filename))
+
+        -- Print the output
+        print(output)
+    else
+        -- If saving failed, print the error message
+        print('Error saving file: ' .. err)
+    end
+end
 vim.api.nvim_create_autocmd('LspAttach', {
 
     callback = function(event)
@@ -153,6 +184,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<leader>vrr', function() vim.lsp.buf.references() end, opts)
         vim.keymap.set('n', '<leader>vrn', function() vim.lsp.buf.rename() end, opts)
         vim.keymap.set('i', '<C-h>', function() vim.lsp.buf.signature_help() end, opts)
+        vim.keymap.set('n', '<C-s>', function() save_with_feedback() end, opts)
+        vim.keymap.set('i', '<C-s>', function() save_with_feedback() end, opts)
     end,
 })
 
@@ -160,7 +193,7 @@ local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { 'tsserver', 'rust_analyzer' },
+    ensure_installed = { 'eslint' },
     handlers = {
         function(server_name)
             require('lspconfig')[server_name].setup({
@@ -205,10 +238,10 @@ cmp.setup({
         { name = 'buffer',  keyword_length = 3 },
     },
     mapping = cmp.mapping.preset.insert({
-        ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<leader><C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<leader><C-n>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<leader><C-y>'] = cmp.mapping.confirm({ select = true }),
+        ['<leader><C-Space>'] = cmp.mapping.complete(),
     }),
     snippet = {
         expand = function(args)

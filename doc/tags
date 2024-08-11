@@ -1,0 +1,4 @@
+keymap-custom	nvim-custom-help-file.txt	/*keymap-custom*
+keymap-default	nvim-custom-help-file.txt	/*keymap-default*
+keymap-help	nvim-custom-help-file.txt	/*keymap-help*
+keymap-help.txt	nvim-custom-help-file.txt	/*keymap-help.txt*

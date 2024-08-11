@@ -1,0 +1,106 @@
+*keymap-help.txt*    For Neovim version 0.5+    Last change: 2024 August 04
+
+NEOVIM KEYMAP HELP                                              *keymap-help*
+
+1. Custom Keybindings                             |keymap-custom|
+2. Default Keybindings                            |keymap-default|
+
+==============================================================================
+1. Custom Keybindings                                         *keymap-custom*
+
+General~
+  <leader>ff         Find files (Telescope)
+  <leader>fs         Live grep (Telescope)
+  <leader>fg         Git files (Telescope)
+  <C-s>              Save file
+  J                  Move selected lines down (visual mode)
+  K                  Move selected lines up (visual mode)
+  <C-d>              Scroll down half a page and center
+  <C-u>              Scroll up half a page and center
+  n                  Next search result and center
+  N                  Previous search result and center
+  <C-w-v>            Split vertically
+  <C-w-[hjkl]>       Navigate buffers
+
+Clipboard~
+  <leader><C-p>      Paste from clipboard (normal mode)
+  <leader><C-P>      Paste from clipboard (normal mode, before cursor)
+  <C-a>              Select all (normal and visual mode)
+  <leader>y          Yank to clipboard (normal and visual mode)
+
+LSP~
+  <leader>f          Format code
+  gd                 Go to definition
+  K                  Show documentation
+
+NvimTree~
+  <leader>e          Toggle NvimTree
+
+Harpoon~
+  <leader>a          Add file to Harpoon
+  <leader>m          Toggle Harpoon menu
+  <leader>n          Navigate to next Harpoon mark
+  <leader>p          Navigate to previous Harpoon mark
+
+==============================================================================
+2. Default Keybindings                                       *keymap-default*
+
+Basic~
+  :                  Command-line mode
+  i                  Insert mode
+  v                  Visual mode
+  V                  Visual line mode
+  <C-v>              Visual block mode
+
+Editing~
+  y                  Yank (copy)
+  p                  Paste
+  d                  Delete
+  u                  Undo
+  <C-r>              Redo
+  >>                 Indent line
+  <<                 Unindent line
+  .                  Repeat last command
+
+Files~
+  :w                 Save
+  :q                 Quit
+
+Navigation~
+  gg                 Go to top of file
+  G                  Go to bottom of file
+  /                  Search forward
+  ?                  Search backward
+  n                  Next search match
+  N                  Previous search match
+  0                  Go to beginning of line
+  $                  Go to end of line
+  w                  Move to next word
+  b                  Move to previous word
+  %                  Jump to matching bracket
+  *                  Search for word under cursor
+
+Window Management~
+  <C-w-s>            Split horizontally
+  <C-w-v>            Split vertically
+  <C-w-q>            Close current window
+  <C-w-o>            Close all windows except current
+  <C-w-=>            Make all windows equal size
+
+Tabs~
+  gt                 Go to next tab
+  gT                 Go to previous tab
+  :tabnew            Create new tab
+  :tabclose          Close current tab
+
+Folding~
+  za                 Toggle fold
+  zR                 Open all folds
+  zM                 Close all folds
+
+Help~
+  :h                 Help
+
+Note: <leader> is typically the backslash (\) key, but can be customized.
+
+ vim:tw=78:ts=8:ft=help:norl:
