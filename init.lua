@@ -42,8 +42,20 @@ local plugins = {
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-lualine/lualine.nvim",       dependencies = { 'nvim-tree/nvim-web-devicons' }, event = "VimEnter" },
     { "nvim-tree/nvim-tree.lua",         dependencies = { "nvim-tree/nvim-web-devicons" } },
-    { "nvim-telescope/telescope.nvim",   tag = "0.1.6",                                    dependencies = { "nvim-lua/plenary.nvim" }, cmd = "Telescope" },
-    { "ThePrimeagen/harpoon",            dependencies = { "nvim-lua/plenary.nvim" } },
+    {
+        "nvim-telescope/telescope.nvim",
+        tag = "0.1.6",
+        dependencies = { "nvim-lua/plenary.nvim",
+
+            {
+                "nvim-telescope/telescope-live-grep-args.nvim",
+                -- This will not install any breaking changes.
+                -- For major updates, this must be adjusted manually.
+                version = "^1.0.0",
+            } },
+        cmd = "Telescope"
+    },
+    { "ThePrimeagen/harpoon",   dependencies = { "nvim-lua/plenary.nvim" } },
     {
         "VonHeikemen/lsp-zero.nvim",
         branch = "v3.x",
@@ -59,7 +71,7 @@ local plugins = {
     },
     { "meatballs/notebook.nvim" }, -- Jupyter Notebook support
     { "folke/which-key.nvim",   event = "VeryLazy" },
-    { "stevearc/conform.nvim",  event = { 'BufWritePre' }, cmd = { 'ConformInfo' } },
+    { "stevearc/conform.nvim",  event = { 'BufWritePre' },                 cmd = { 'ConformInfo' } },
     { "numToStr/Comment.nvim" },
 }
 
@@ -75,14 +87,18 @@ require("catppuccin").setup({
 })
 vim.cmd.colorscheme "catppuccin"
 
+
+
 -- TELESCOPE CONFIG
+
 local builtin = require('telescope.builtin')
+vim.keymap.set("n", "<leader>fa", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
+
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fs', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fg', builtin.git_files, {})
 vim.keymap.set('n', '<leader>fb', builtin.current_buffer_fuzzy_find, {})
 vim.keymap.set('', '<leader>fv', builtin.grep_string, {})
-
 -- NVIM TREE CONFIG
 require("nvim-tree").setup({
     sort_by = "case_sensitive",
@@ -257,10 +273,10 @@ vim.keymap.set('n', '<Tab>', ':tabnext<CR>', { noremap = true, silent = true }) 
 vim.keymap.set('n', '<S-Tab>', ':tabprevious<CR>', { noremap = true, silent = true }) -- Previous tab
 
 -- GENERAL KEYMAPS
-vim.keymap.set("","<leader><c-i>","<esc>i",{})
-vim.keymap.set("","<leader><c-n>","<esc>n")
-vim.keymap.set("","<leader><c-v>","<esc>v",{})
-vim.keymap.set("t","<esc><esc>","<c-\\><c-n>",{})
+vim.keymap.set("", "<leader><c-i>", "<esc>i", {})
+vim.keymap.set("", "<leader><c-n>", "<esc>n")
+vim.keymap.set("", "<leader><c-v>", "<esc>v", {})
+vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", {})
 
 
 -- WHICH-KEY CONFIG
