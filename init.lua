@@ -38,6 +38,16 @@ vim.opt.rtp:prepend(lazypath)
 
 -- PLUGINS
 local plugins = {
+
+
+    {
+        "catgoose/nvim-colorizer.lua",
+        event = "BufReadPre",
+        opts = { -- set to setup table
+        },
+    },
+
+
     {
         "catppuccin/nvim",
         lazy = false,
@@ -202,6 +212,9 @@ local plugins = {
 }
 
 require("lazy").setup(plugins)
+
+
+require("colorizer").setup()
 
 -- THEME INIT
 require("catppuccin").setup({
