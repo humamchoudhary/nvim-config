@@ -173,7 +173,36 @@ local plugins = {
 		end,
 	},
 
-	{ "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
+	-- { "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
+
+	{
+		"nvim-tree/nvim-tree.lua",
+		version = "*",
+		lazy = false,
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = function()
+			require("nvim-tree").setup({
+				renderer = {
+					highlight_git = true,
+					highlight_opened_files = "name",
+					indent_markers = { enable = true },
+				},
+			})
+
+			-- Custom highlights
+			local hl = vim.api.nvim_set_hl
+			hl(0, "NvimTreeNormal", { bg = "#1e1e2e" })
+			hl(0, "NvimTreeFolderName", { fg = "#89b4fa", bold = true })
+			hl(0, "NvimTreeOpenedFolderName", { fg = "#f38ba8", italic = true })
+			hl(0, "NvimTreeRootFolder", { fg = "#fab387", bold = true })
+			hl(0, "NvimTreeIndentMarker", { fg = "#585b70" })
+			hl(0, "NvimTreeGitDirty", { fg = "#f9e2af" })
+			hl(0, "NvimTreeGitNew", { fg = "#a6e3a1" })
+			hl(0, "NvimTreeGitDeleted", { fg = "#f38ba8" })
+		end,
+	},
 	{
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.6",
@@ -220,6 +249,29 @@ require("catppuccin").setup({
 		light = "latte",
 		dark = "mocha",
 	},
+
+	custom_highlights = function(colors)
+		return {
+			Comment = { fg = colors.flamingo },
+			TabLineSel = { bg = colors.pink },
+			CmpBorder = { fg = colors.surface2 },
+			Pmenu = { bg = colors.none },
+		}
+	end,
+
+	integrations = {
+		cmp = true,
+		gitsigns = true,
+		nvimtree = true,
+		treesitter = true,
+		notify = false,
+		mini = {
+			enabled = true,
+			indentscope_color = "",
+		},
+	},
+
+	treesitter = true,
 })
 vim.cmd.colorscheme("catppuccin")
 
@@ -253,7 +305,6 @@ require("nvim-tree").setup({
 		api.config.mappings.default_on_attach(bufnr)
 	end,
 })
-
 -- HARPOON CONFIG
 vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file, {})
 vim.keymap.set("n", "<leader>m", require("harpoon.ui").toggle_quick_menu, {})
