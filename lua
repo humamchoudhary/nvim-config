@@ -1,1 +1,0 @@
-/home/humam/.config/nvim/lua
