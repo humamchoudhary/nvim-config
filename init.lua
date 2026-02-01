@@ -13,7 +13,8 @@ vim.opt.updatetime = 50
 vim.opt.fsync = false
 vim.opt.clipboard = "unnamedplus" -- Use system clipboard
 vim.opt.fixeol = false            -- Don't add newline at end of file
-
+vim.o.winhighlight = "Visual:Visual"
+vim.opt.virtualedit = ""
 vim.g.autoformat = false
 -- HELP
 vim.api.nvim_create_user_command("HKL", "help keymap-help", {})
@@ -63,28 +64,43 @@ local plugins = {
         },
     },
 
-    {
-        "catppuccin/nvim",
-        lazy = false,
-        name = "catppuccin",
-        priority = 1000,
-        config = function()
-            require("catppuccin").setup({
-                transparent_background = true,
-            })
-            vim.cmd.colorscheme("catppuccin")
-        end,
-    },
+    -- {
+    --     "catppuccin/nvim",
+    --     lazy = false,
+    --     name = "catppuccin",
+    --     priority = 1000,
+    --     config = function()
+    --         require("catppuccin").setup({
+    --             transparent_background = true,
+    --         })
+    --         vim.cmd.colorscheme("catppuccin")
+    --     end,
+    -- },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 
     {
         "nvim-lualine/lualine.nvim",
         config = function()
-            require("lualine").setup({
-                options = {
-                    theme = "iceberg_dark",
-                },
-            })
+            require('lualine').setup {
+  options = {
+    theme = {
+      normal = { a = { fg = '#e0e0e0', bg = '#050505' },
+                 b = { fg = '#c0c0c0', bg = '#050505' },
+                 c = { fg = '#888888', bg = '#050505' },
+               },
+      insert = { a = { fg = '#50fa7b', bg = '#050505' } },
+      visual = { a = { fg = '#ff79c6', bg = '#050505' } },
+      replace = { a = { fg = '#ff5555', bg = '#050505' } },
+    },
+    component_separators = '|',
+    section_separators = '',
+  }
+}
+            -- require("lualine").setup({
+            --     options = {
+            --         theme = "iceberg_dark",
+            --     },
+            -- })
         end,
     },
     {
@@ -342,12 +358,27 @@ local plugins = {
                 debounce = 200,
             },
         }
-    }
-
-
+    },
+    {  "nyoom-engineering/oxocarbon.nvim",
+        lazy = false,
+    priority = 1000,
+ -- config = function()
+ --    end,
+}
 }
 
+
 require("lazy").setup(plugins)
+
+
+vim.opt.termguicolors = true
+vim.o.background = "dark"
+
+-- Base colorscheme
+vim.cmd("colorscheme oxocarbon") 
+
+
+        require("colors")  -- points to colors.lua
 
 require("colorizer").setup()
 
@@ -356,37 +387,37 @@ require("luasnip.loaders.from_vscode").lazy_load()
 
 
 -- THEME INIT
-require("catppuccin").setup({
-    flavour = "mocha",
-    background = {
-        light = "latte",
-        dark = "mocha",
-    },
-
-    custom_highlights = function(colors)
-        return {
-            Comment = { fg = colors.flamingo },
-            TabLineSel = { bg = colors.pink },
-            CmpBorder = { fg = colors.surface2 },
-            Pmenu = { bg = colors.none },
-        }
-    end,
-
-    integrations = {
-        cmp = true,
-        gitsigns = true,
-        nvimtree = true,
-        treesitter = true,
-        notify = false,
-        mini = {
-            enabled = true,
-            indentscope_color = "",
-        },
-    },
-
-    treesitter = true,
-})
-vim.cmd.colorscheme("catppuccin")
+-- require("catppuccin").setup({
+--     flavour = "mocha",
+--     background = {
+--         light = "latte",
+--         dark = "mocha",
+--     },
+--
+--     custom_highlights = function(colors)
+--         return {
+--             Comment = { fg = colors.flamingo },
+--             TabLineSel = { bg = colors.pink },
+--             CmpBorder = { fg = colors.surface2 },
+--             Pmenu = { bg = colors.none },
+--         }
+--     end,
+--
+--     integrations = {
+--         cmp = true,
+--         gitsigns = true,
+--         nvimtree = true,
+--         treesitter = true,
+--         notify = false,
+--         mini = {
+--             enabled = true,
+--             indentscope_color = "",
+--         },
+--     },
+--
+--     treesitter = true,
+-- })
+-- vim.cmd.colorscheme("catppuccin")
 
 -- TELESCOPE CONFIG
 
