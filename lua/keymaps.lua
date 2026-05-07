@@ -125,13 +125,13 @@ M.setup = function()
         -- ============================================================================
         -- AERIAL (Tags/Code Outline)
         -- ============================================================================
-        { "<leader>t",     group = "Tags/Outline" },
-        { "<leader>to",    "<cmd>AerialToggle!<CR>",                                                       desc = "Toggle code outline" },
-        { "<leader>tn",    "<cmd>AerialNext<CR>",                                                          desc = "Next symbol" },
-        { "<leader>tp",    "<cmd>AerialPrev<CR>",                                                          desc = "Previous symbol" },
-        { "<leader>tN",    "<cmd>AerialNextUp<CR>",                                                        desc = "Next symbol (up)" },
-        { "<leader>tP",    "<cmd>AerialPrevUp<CR>",                                                        desc = "Previous symbol (up)" },
-        { "<leader>tf",    "<cmd>Telescope aerial<CR>",                                                    desc = "Find symbols" },
+        { "<leader>T",     group = "Tags/Outline" },
+        { "<leader>To",    "<cmd>AerialToggle!<CR>",                                                       desc = "Toggle code outline" },
+        { "<leader>Tn",    "<cmd>AerialNext<CR>",                                                          desc = "Next symbol" },
+        { "<leader>Tp",    "<cmd>AerialPrev<CR>",                                                          desc = "Previous symbol" },
+        { "<leader>TN",    "<cmd>AerialNextUp<CR>",                                                        desc = "Next symbol (up)" },
+        { "<leader>TP",    "<cmd>AerialPrevUp<CR>",                                                        desc = "Previous symbol (up)" },
+        { "<leader>Tf",    "<cmd>Telescope aerial<CR>",                                                    desc = "Find symbols" },
 
         -- ============================================================================
         -- FOLDING (nvim-ufo)
