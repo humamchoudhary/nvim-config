@@ -24,8 +24,8 @@ vim.api.nvim_create_user_command("HKL", "help keymap-help", {})
 
 vim.diagnostic.config({
     virtual_text = true, -- show inline messages
-    signs = true,      -- show gutter signs
-    underline = true,  -- show underline
+    signs = true,        -- show gutter signs
+    underline = true,    -- show underline
     update_in_insert = false,
     severity_sort = true,
     float = { border = "rounded" },
@@ -236,8 +236,10 @@ local plugins = {
         cmd = "Telescope",
     },
 
-    { "ThePrimeagen/harpoon",   dependencies = { "nvim-lua/plenary.nvim" } },
 
+    { "ThePrimeagen/harpoon",             dependencies = { "nvim-lua/plenary.nvim" } },
+    { "williamboman/mason.nvim" },
+    { "williamboman/mason-lspconfig.nvim" },
     {
         "VonHeikemen/lsp-zero.nvim",
         branch = "v3.x",
@@ -254,38 +256,6 @@ local plugins = {
 
     { "meatballs/notebook.nvim" },
 
-    {
-        "akinsho/toggleterm.nvim",
-        version = "*",
-        config = function()
-            require("toggleterm").setup({
-                size = function(term)
-                    if term.direction == "horizontal" then
-                        return 15
-                    elseif term.direction == "vertical" then
-                        return vim.o.columns * 0.4
-                    end
-                end,
-                open_mapping = false, -- We'll handle keybinds manually
-                hide_numbers = true,
-                shade_terminals = true,
-                shading_factor = -1,
-                start_in_insert = true,
-                persist_size = true,
-                direction = "float",
-                close_on_exit = true,
-                float_opts = {
-                    border = "rounded",
-                    width = function(term)
-                        return math.floor(vim.o.columns * 0.8)
-                    end,
-                    height = function(term)
-                        return math.floor(vim.o.lines * 0.8)
-                    end,
-                },
-            })
-        end,
-    },
 
     { "folke/which-key.nvim",   event = "VeryLazy" },
     { "stevearc/conform.nvim",  cmd = { "ConformInfo" } },
@@ -379,64 +349,64 @@ local plugins = {
         end,
     },
 
-{
-  "lewis6991/gitsigns.nvim",
-  event = { "BufReadPre", "BufNewFile" },
-  opts = {
-    signs = {
-      add          = { text = '┃' },
-      change       = { text = '┃' },
-      delete       = { text = '_' },
-      topdelete    = { text = '‾' },
-      changedelete = { text = '~' },
-      untracked    = { text = '┆' },
-    },
-    signs_staged = {
-      add          = { text = '┃' },
-      change       = { text = '┃' },
-      delete       = { text = '_' },
-      topdelete    = { text = '‾' },
-      changedelete = { text = '~' },
-      untracked    = { text = '┆' },
-    },
-    signs_staged_enable = true,
-    signcolumn = true,
-    numhl      = false,
-    linehl     = false,
-    word_diff  = false,
+    {
+        "lewis6991/gitsigns.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            signs                        = {
+                add          = { text = '┃' },
+                change       = { text = '┃' },
+                delete       = { text = '_' },
+                topdelete    = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked    = { text = '┆' },
+            },
+            signs_staged                 = {
+                add          = { text = '┃' },
+                change       = { text = '┃' },
+                delete       = { text = '_' },
+                topdelete    = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked    = { text = '┆' },
+            },
+            signs_staged_enable          = true,
+            signcolumn                   = true,
+            numhl                        = false,
+            linehl                       = false,
+            word_diff                    = false,
 
-    watch_gitdir = {
-      follow_files = true
-    },
+            watch_gitdir                 = {
+                follow_files = true
+            },
 
-    auto_attach = true,
-    attach_to_untracked = false,
+            auto_attach                  = true,
+            attach_to_untracked          = false,
 
-    current_line_blame = false,
-    current_line_blame_opts = {
-      virt_text = true,
-      virt_text_pos = 'eol',
-      delay = 1000,
-      ignore_whitespace = false,
-      virt_text_priority = 100,
-      use_focus = true,
-    },
+            current_line_blame           = false,
+            current_line_blame_opts      = {
+                virt_text = true,
+                virt_text_pos = 'eol',
+                delay = 1000,
+                ignore_whitespace = false,
+                virt_text_priority = 100,
+                use_focus = true,
+            },
 
-    current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
+            current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
 
-    sign_priority = 6,
-    update_debounce = 100,
-    status_formatter = nil,
-    max_file_length = 40000,
+            sign_priority                = 6,
+            update_debounce              = 100,
+            status_formatter             = nil,
+            max_file_length              = 40000,
 
-    preview_config = {
-      style = 'minimal',
-      relative = 'cursor',
-      row = 0,
-      col = 1
-    },
-  },
-}
+            preview_config               = {
+                style = 'minimal',
+                relative = 'cursor',
+                row = 0,
+                col = 1
+            },
+        },
+    }
 
 
 }
@@ -496,33 +466,26 @@ require("Comment").setup()
 -- LSP CONFIG
 local lsp = require("lsp-zero").preset({})
 
-lsp.on_attach(function(client, bufnr)
-    -- LSP keymaps are now handled by which-key in keymaps.lua
-end)
+require("mason").setup()
 
-require("mason").setup({})
 require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "rust_analyzer", "pyright", "tailwindcss", "dockerls" },
-    handlers = {
-        function(server_name)
-            require("lspconfig")[server_name].setup({})
-        end,
-        ["lua_ls"] = function()
-            require("lspconfig").lua_ls.setup({
-                settings = {
-                    Lua = {
-                        diagnostics = { globals = { "vim" } },
-                    },
-                },
-            })
-        end,
-        ["tailwindcss"] = function()
-            require("lspconfig").tailwindcss.setup({})
-        end,
+    ensure_installed = {
+        -- existing
+        "lua_ls", "rust_analyzer", "pyright", "tailwindcss", "dockerls",
+        -- vscode extracted
+        "html",
+        "cssls",
+        "jsonls",
+        "eslint", "jinja_lsp"
     },
 })
 
 lsp.setup()
+
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 
 -- AUTOCOMPLETE CONFIG
 local cmp = require("cmp")
@@ -554,14 +517,14 @@ cmp.setup({
 require("conform").setup({
     formatters_by_ft = {
         lua = { "stylua" },
-        python = { "black", "isort" },
+        python = { "black" },
         javascript = { "prettier" },
         typescript = { "prettier" },
         javascriptreact = { "prettier" },
         typescriptreact = { "prettier" },
         css = { "prettier" },
         html = { "prettier" },
-        htmldjango = { "djlint" },
+        htmldjango = { "djlint" }, -- remove "prettier", djlint handles jinja/django templates
         jinja = { "djlint" },
         json = { "prettier" },
         yaml = { "prettier" },
@@ -569,10 +532,7 @@ require("conform").setup({
     },
     async = true,
     lsp_fallback = true,
-    format_on_save = {
-        timeout_ms = 5000,
-        lsp_fallback = false,
-    },
+    -- format_on_save disabled - only format via hotkey
     timeout_ms = 5000,
 })
 

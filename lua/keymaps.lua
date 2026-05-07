@@ -45,7 +45,8 @@ M.setup = function()
         { "<leader>fb",    "<cmd>Telescope current_buffer_fuzzy_find<CR>",                                 desc = "Buffer fuzzy find" },
         { "<leader>fv",    "<cmd>Telescope grep_string<CR>",                                               desc = "Grep string under cursor" },
         { "<leader>fa",    "<cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", desc = "Live grep with args" },
-        { "<leader>f",     function() vim.lsp.buf.format() end,                                            desc = "Format file (LSP)",                 mode = "n" },
+        -- { "<leader>f",     function() vim.lsp.buf.format() end,                                            desc = "Format file (LSP)",                 mode = "n" },
+        { "<leader>f",     function() require("conform").format({ async = true }) end,                     desc = "Format file",                       mode = "n" },
 
 
         -- Spectre
@@ -68,9 +69,6 @@ M.setup = function()
         { "<leader>p",     function() require("harpoon.ui").nav_prev() end,                                desc = "Harpoon: Previous" },
 
         -- Terminal
-        { "<leader>t",     function() require("toggleterm").toggle(0) end,                                desc = "Toggle floating terminal" },
-        { "<leader>th",    function() require("toggleterm").toggle(0, { direction = "horizontal" }) end, desc = "Toggle horizontal terminal" },
-        { "<leader>tv",    function() require("toggleterm").toggle(0, { direction = "vertical" }) end,   desc = "Toggle vertical terminal" },
 
         -- Reload config
         { "<leader>r",     ":luafile $MYVIMRC<CR>",                                                        desc = "Reload Neovim config" },
