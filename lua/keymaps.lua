@@ -98,6 +98,51 @@ M.setup = function()
         { "<leader><c-v>", "<esc>v",                                                                       desc = "Escape to visual" },
 
         -- ============================================================================
+        -- GIT (Fugitive)
+        -- ============================================================================
+        { "<leader>g",     group = "Git" },
+        { "<leader>gs",    "<cmd>Git<CR>",                                                                 desc = "Git status" },
+        { "<leader>gw",    "<cmd>Gwrite<CR>",                                                              desc = "Git add (write)" },
+        { "<leader>gc",    "<cmd>Git commit<CR>",                                                          desc = "Git commit" },
+        { "<leader>gpl",   "<cmd>Git pull<CR>",                                                            desc = "Git pull" },
+        { "<leader>gpu",   "<cmd>Git push<CR>",                                                            desc = "Git push" },
+        { "<leader>gl",    "<cmd>Git log<CR>",                                                             desc = "Git log" },
+        { "<leader>gb",    "<cmd>Git blame<CR>",                                                           desc = "Git blame" },
+        { "<leader>gd",    "<cmd>Gdiffsplit<CR>",                                                          desc = "Git diff" },
+        { "<leader>gbd",   "<cmd>Git branch -d",                                                           desc = "Delete branch" },
+
+        -- ============================================================================
+        -- HOP (Fast Navigation)
+        -- ============================================================================
+        { "<leader>h",     group = "Hop" },
+        { "<leader>hw",    "<cmd>HopWord<CR>",                                                             desc = "Hop to word" },
+        { "<leader>hl",    "<cmd>HopLine<CR>",                                                             desc = "Hop to line" },
+        { "<leader>hc",    "<cmd>HopChar1<CR>",                                                            desc = "Hop to char" },
+        { "<leader>hC",    "<cmd>HopChar2<CR>",                                                            desc = "Hop to 2 chars" },
+        { "<leader>hp",    "<cmd>HopPattern<CR>",                                                          desc = "Hop to pattern" },
+        { "s",             "<cmd>HopWord<CR>",                                                             desc = "Hop to word (quick)" },
+
+        -- ============================================================================
+        -- AERIAL (Tags/Code Outline)
+        -- ============================================================================
+        { "<leader>t",     group = "Tags/Outline" },
+        { "<leader>to",    "<cmd>AerialToggle!<CR>",                                                       desc = "Toggle code outline" },
+        { "<leader>tn",    "<cmd>AerialNext<CR>",                                                          desc = "Next symbol" },
+        { "<leader>tp",    "<cmd>AerialPrev<CR>",                                                          desc = "Previous symbol" },
+        { "<leader>tN",    "<cmd>AerialNextUp<CR>",                                                        desc = "Next symbol (up)" },
+        { "<leader>tP",    "<cmd>AerialPrevUp<CR>",                                                        desc = "Previous symbol (up)" },
+        { "<leader>tf",    "<cmd>Telescope aerial<CR>",                                                    desc = "Find symbols" },
+
+        -- ============================================================================
+        -- FOLDING (nvim-ufo)
+        -- ============================================================================
+        { "zR",            function() require("ufo").openAllFolds() end,                                   desc = "Open all folds" },
+        { "zM",            function() require("ufo").closeAllFolds() end,                                  desc = "Close all folds" },
+        { "zr",            function() require("ufo").openFoldsExceptKinds() end,                           desc = "Open folds except kinds" },
+        { "zm",            function() require("ufo").closeFoldsWith() end,                                 desc = "Close folds with" },
+        { "zp",            function() local winid = require("ufo").peekFoldedLinesUnderCursor() end,       desc = "Peek fold" },
+
+        -- ============================================================================
         -- NON-LEADER KEYBINDINGS
         -- ============================================================================
         -- LSP

@@ -17,6 +17,13 @@ vim.o.winhighlight = "Visual:Visual"
 vim.opt.virtualedit = ""
 vim.g.autoformat = false
 
+-- Folding settings for nvim-ufo
+vim.o.foldcolumn = "1"        -- Show fold column
+vim.o.foldlevel = 99          -- Open most folds by default
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true       -- Enable folding
+vim.o.fillchars = [[eob: ,fold: ,foldopen:▾,foldsep: ,foldclose:▸]]
+
 -- HELP
 vim.api.nvim_create_user_command("HKL", "help keymap-help", {})
 
@@ -87,7 +94,21 @@ local plugins = {
                     },
                     component_separators = '|',
                     section_separators = '',
-                }
+                },
+                sections = {
+                    lualine_c = {
+                        {
+                            'filename',
+                            path = 1,  -- Show relative path
+                            shorting_target = 40,  -- Minimum width before shortening
+                            symbols = {
+                                modified = ' ●',
+                                readonly = ' ',
+                                unnamed = '[No Name]',
+                            }
+                        }
+                    },
+                },
             }
         end,
     },
@@ -249,6 +270,10 @@ local plugins = {
             "neovim/nvim-lspconfig",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/nvim-cmp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-calc",
+            "hrsh7th/cmp-nvim-lsp-signature-help",
             "L3MON4D3/LuaSnip",
             "saadparwaiz1/cmp_luasnip",
         },
@@ -260,6 +285,69 @@ local plugins = {
     { "folke/which-key.nvim",   event = "VeryLazy" },
     { "stevearc/conform.nvim",  cmd = { "ConformInfo" } },
     { "numToStr/Comment.nvim" },
+
+    -- Git with vim-fugitive
+    { "tpope/vim-fugitive" },
+
+    -- Hop.nvim for fast navigation
+    {
+        "smoka7/hop.nvim",
+        version = "*",
+        opts = {
+            keys = "etovxqpdygfblzhckisuran",
+        },
+    },
+
+    -- Code folding with nvim-ufo
+    {
+        "kevinhwang91/nvim-ufo",
+        dependencies = {
+            "kevinhwang91/promise-async",
+            "kevinhwang91/nvim-ufo",
+        },
+        config = function()
+            require("ufo").setup({
+                provider_selector = function(bufnr, filetype, buftype)
+                    return { "treesitter", "indent" }
+                end,
+            })
+        end,
+    },
+
+    -- Status column for fold indicators
+    {
+        "luukvbaal/statuscol.nvim",
+        config = function()
+            local builtin = require("statuscol.builtin")
+            require("statuscol").setup({
+                relculright = true,
+                segments = {
+                    { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+                    { text = { "%s" }, click = "v:lua.ScSa" },
+                    { text = { builtin.lnumfunc, " " }, condition = { true, builtin.not_empty }, click = "v:lua.ScLa" },
+                },
+            })
+        end,
+    },
+
+    -- Aerial for tags/code navigation
+    {
+        "stevearc/aerial.nvim",
+        opts = {},
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons",
+        },
+        config = function()
+            require("aerial").setup({
+                layout = {
+                    default_direction = "right",
+                },
+            })
+            -- Telescope aerial extension
+            require("telescope").load_extension("aerial")
+        end,
+    },
 
     {
         "ray-x/go.nvim",
@@ -455,7 +543,14 @@ require("nvim-tree").setup({
 
 -- TREESITTER CONFIG
 require("nvim-treesitter.configs").setup({
-    ensure_installed = { "c", "lua", "javascript", "html", "python", "go", "sql" },
+    ensure_installed = {
+        "c", "cpp", "lua", "vim", "vimdoc",
+        "javascript", "typescript", "tsx",
+        "html", "css", "json", "yaml",
+        "python", "go", "rust", "sql",
+        "bash", "markdown", "markdown_inline",
+        "htmldjango", "jinja",
+    },
     highlight = { enable = true },
     indent = { enable = false },
 })
@@ -464,76 +559,118 @@ require("nvim-treesitter.configs").setup({
 require("Comment").setup()
 
 -- LSP CONFIG
-local lsp = require("lsp-zero").preset({})
-
 require("mason").setup()
-
 require("mason-lspconfig").setup({
     ensure_installed = {
-        -- existing
-        "lua_ls", "rust_analyzer", "pyright", "tailwindcss", "dockerls",
-        -- vscode extracted
-        "html",
-        "cssls",
-        "jsonls",
-        "eslint", "jinja_lsp"
+        "lua_ls",           -- Lua
+        "rust_analyzer",    -- Rust
+        "pyright",          -- Python (primary)
+        "tailwindcss",      -- Tailwind CSS
+        "dockerls",         -- Docker
+        "html",             -- HTML
+        "cssls",            -- CSS
+        "jsonls",           -- JSON
+        "ts_ls",            -- TypeScript/JavaScript (updated from tsserver)
+        "bashls",           -- Bash
+        "clangd",           -- C/C++
+        "gopls",            -- Go
+        "emmet_ls",         -- Emmet for HTML/JSX
+        "jinja_lsp",        -- Jinja/HTMX templates
     },
 })
 
-lsp.setup()
+-- LSP-ZERO SETUP
+local lsp_zero = require("lsp-zero")
 
+-- LSP keybindings are set in keymaps.lua
+-- Attach keybindings when LSP attaches to buffer
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+    callback = function(ev)
+        local opts = { buffer = ev.buf }
+        -- Keybindings are already defined in keymaps.lua
+        -- This just ensures LSP is ready
+        vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+    end,
+})
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
+lsp_zero.setup()
 
 -- AUTOCOMPLETE CONFIG
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
+local cmp_action = require("lsp-zero").cmp_action()
 
 require("luasnip.loaders.from_vscode").lazy_load()
 
 cmp.setup({
     sources = {
         { name = "path" },
-        { name = "nvim_lsp" },
-        { name = "luasnip", keyword_length = 2 },
-        { name = "buffer",  keyword_length = 3 },
+        { name = "nvim_lsp",                priority = 100 },
+        { name = "luasnip",                 keyword_length = 2 },
+        { name = "buffer",                  keyword_length = 3 },
+        { name = "nvim_lsp_signature_help" },
+        { name = "calc" },
     },
     mapping = cmp.mapping.preset.insert({
         ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
         ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
         ["<C-y>"] = cmp.mapping.confirm({ select = true }),
         ["<C-Space>"] = cmp.mapping.complete(),
+        ["<Tab>"] = cmp_action.tab_complete(),
+        ["<S-Tab>"] = cmp_action.select_prev_or_fallback(),
+        ["<CR>"] = cmp.mapping.confirm({ select = false }),
     }),
     snippet = {
         expand = function(args)
             require("luasnip").lsp_expand(args.body)
         end,
     },
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
+    formatting = {
+        fields = { "abbr", "kind", "menu" },
+        format = function(entry, item)
+            local menu_icon = {
+                nvim_lsp = "λ",
+                luasnip = "⋗",
+                buffer = "Ω",
+                path = "🖫",
+            }
+            item.menu = menu_icon[entry.source.name]
+            return item
+        end,
+    },
 })
 
 -- AUTOFORMAT CONFIG (Conform)
+-- Format ONLY on <leader>f keypress, NOT on save
 require("conform").setup({
     formatters_by_ft = {
         lua = { "stylua" },
-        python = { "black" },
+        python = { "black", "isort" },
         javascript = { "prettier" },
         typescript = { "prettier" },
         javascriptreact = { "prettier" },
         typescriptreact = { "prettier" },
         css = { "prettier" },
         html = { "prettier" },
-        htmldjango = { "djlint" }, -- remove "prettier", djlint handles jinja/django templates
+        htmldjango = { "djlint" },
         jinja = { "djlint" },
         json = { "prettier" },
         yaml = { "prettier" },
         markdown = { "prettier" },
+        go = { "gofmt", "goimports" },
+        rust = { "rustfmt" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
     },
-    async = true,
+    -- NO format_on_save - format manually with <leader>f
     lsp_fallback = true,
-    -- format_on_save disabled - only format via hotkey
-    timeout_ms = 5000,
 })
 
 -- JUPYTER NOTEBOOK (notebook.nvim) CONFIG
